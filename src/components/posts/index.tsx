@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-import { CommentData } from "../../types/posts.ts";
 import useToast from "../../hooks/useToast.jsx";
 import { Tooltip } from "react-tooltip";
+import { PostTableProps } from "../../types/posts.ts";
 
-interface PostTableProps {
-  comments: CommentData[];
-  fetchData: () => void;
-}
 const PostTable: React.FC<PostTableProps> = ({ comments, fetchData }) => {
   const [deletingPost, setDeletingPost] = useState<number | null>(null);
   const { toastSuccess, toastError } = useToast();

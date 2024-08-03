@@ -1,14 +1,5 @@
 import React from "react";
-
-interface CommentFormProps {
-  name: string;
-  email: string;
-  body: string;
-  setName: (name: string) => void;
-  setEmail: (email: string) => void;
-  setBody: (body: string) => void;
-  handleSubmit: (event: React.FormEvent) => void;
-}
+import { CommentFormProps } from "../../types/posts";
 
 const CommentForm: React.FC<CommentFormProps> = ({ name, email, body, setName, setEmail, setBody, handleSubmit }) => {
   return (

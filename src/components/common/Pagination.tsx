@@ -1,13 +1,6 @@
 import React from "react";
 import { MdChevronLeft, MdChevronRight, MdFirstPage, MdLastPage } from "react-icons/md";
-
-interface PaginationProps {
-  currentPage: number;
-  itemsPerPage: number;
-  totalItems: number;
-  setPage: (page: number) => void;
-  setItemsPerPage: (number: number) => void;
-}
+import { PaginationProps } from "../../types/pagination.ts";
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, itemsPerPage, totalItems, setPage, setItemsPerPage }) => {
   const lastPage = Math.ceil(totalItems / itemsPerPage);
