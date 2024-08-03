@@ -4,20 +4,23 @@ import ErrorState from "../../components/common/ErrorState.tsx";
 import EmptyState from "../../components/common/EmptyState.tsx";
 import PostTable from "../../components/posts/index.tsx";
 import Pagination from "../../components/common/Pagination.tsx";
+import { useSearchParams } from "react-router-dom";
+import { CommentData } from "../../types/posts.ts";
+import debounce from "lodash.debounce";
 
 const Post: React.FC = () => {
-  type CommentData = {
-    postId: number;
-    id: number;
-    name: string;
-    email: string;
-    body: string;
-  };
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<CommentData[] | null>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const [email, setEmail] = useState("");
+  const [search, setSearch] = useState("");
+  const searchTerm = searchParams.get("search") || "";
+  const emailSearchTerm = searchParams.get("email") || "";
 
   async function fetchData() {
     setIsLoading(true); // Start loading
@@ -41,32 +44,69 @@ const Post: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const [searchTerm, setSearchTerm] = useState("");
-  const [emailSearchTerm, setEmailSearchTerm] = useState("");
-  const currentItems = data
+  }, [searchParams]);
+
+  const handleSearchChange = debounce((newSearchTerm: string, type: "search" | "email") => {
+    const newParams = { ...Object.fromEntries(searchParams), page: "1" };
+    if (newSearchTerm) {
+      newParams[type] = newSearchTerm;
+    } else {
+      delete newParams[type];
+      if (type === "search") {
+        setSearch("");
+      } else if (type === "email") {
+        setEmail("");
+      }
+    }
+    setSearchParams(newParams);
+  }, 300);
+
+  const handlePageChange = (newPage) => {
+    setSearchParams({ ...Object.fromEntries(searchParams), page: newPage.toString() });
+  };
+
+  const filteredData = data
     ? data
         .filter((item) => {
-          return (item.name.includes(searchTerm) || item.body.includes(searchTerm) || item.id.toString().includes(searchTerm) || item.postId.toString().includes(searchTerm)) && item.email.includes(emailSearchTerm);
+          return item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.body.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm) || item.postId.toString().includes(searchTerm) || item.email.toLowerCase().includes(searchTerm.toLowerCase());
         })
-        .slice(indexOfFirstItem, indexOfLastItem)
+        .filter((item) => item.email.toLowerCase().includes(emailSearchTerm.toLowerCase()))
     : [];
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const PaginationComponent = <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} totalItems={data ? data.length : 0} setPage={setCurrentPage} setItemsPerPage={setItemsPerPage} />;
+  const PaginationComponent = <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} totalItems={filteredData?.length || 0} setPage={handlePageChange} setItemsPerPage={setItemsPerPage} />;
   return (
     <div className="p-10 flex flex-col justify-center">
       <h1 className="font-bold text-2xl leading-8 py-10">Post application using JavaScript/TypeScript.</h1>
-      <div className=" flex flex-row gap-2 py-2 pl-[10%]">
-        <div className="flex flex-col gap-2">
+      {/* border overflow-x-auto m-10 max-sm:m-1 max-sm:my-10 overflow-scroll */}
+      <div className=" m-10 flex flex-row max-sm:flex-col gap-2 py-2 max-sm:py-1 max-sm:gap-1">
+        <div className="flex flex-col gap-2 w-full">
           <label className="text-[#21191B]">Search in entire data</label>
-          <input id="searchAll" type="text" placeholder="Search in entire data" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="mb-4 p-2 border rounded" />
+          <input
+            id="searchAll"
+            type="text"
+            placeholder="Search in entire data"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              handleSearchChange(e.target.value, "search");
+            }}
+            className="mb-4 p-2 border rounded"
+          />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
           <label className="text-[#21191B]">Search by email</label>
-          <input id="searchEmail" type="text" placeholder="Search by email" value={emailSearchTerm} onChange={(e) => setEmailSearchTerm(e.target.value)} className="mb-4 p-2 border rounded" />
+          <input
+            id="searchEmail"
+            type="text"
+            placeholder="Search by email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              handleSearchChange(e.target.value, "email");
+            }}
+            className="mb-4 p-2 border rounded"
+          />
         </div>
       </div>
       {isLoading ? (
@@ -76,7 +116,7 @@ const Post: React.FC = () => {
           <ErrorState message={error} />
         </div>
       ) : data ? (
-        data.length === 0 ? (
+        currentItems.length === 0 ? (
           <EmptyState />
         ) : (
           <div>
