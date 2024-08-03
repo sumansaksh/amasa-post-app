@@ -4,7 +4,7 @@ import ErrorState from "../../components/common/ErrorState.tsx";
 import EmptyState from "../../components/common/EmptyState.tsx";
 import PostTable from "../../components/posts/index.tsx";
 import Pagination from "../../components/common/Pagination.tsx";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { CommentData } from "../../types/posts.ts";
 import debounce from "lodash.debounce";
 
@@ -78,9 +78,14 @@ const Post: React.FC = () => {
   const PaginationComponent = <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} totalItems={filteredData?.length || 0} setPage={handlePageChange} setItemsPerPage={setItemsPerPage} />;
   return (
     <div className="p-10 flex flex-col justify-center">
-      <h1 className="font-bold text-2xl leading-8 py-10 capitalize">Post application using JavaScript / TypeScript.</h1>
-      {/* border overflow-x-auto m-10 max-sm:m-1 max-sm:my-10 overflow-scroll */}
-      <div className=" m-10 flex flex-row max-sm:flex-col gap-2 py-2 max-sm:py-1 max-sm:gap-1">
+      <div className={`flex justify-between items-center max-sm:flex-col-reverse max-sm:items-end`}>
+        <h1 className="font-bold text-2xl leading-8 py-10 capitalize">Post application using JavaScript / TypeScript.</h1>
+        <Link to="/create-comment">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-h-10">Create</button>
+        </Link>
+      </div>
+
+      <div className="max-sm:m-1 m-10 flex flex-row max-sm:flex-col gap-2 py-2 max-sm:py-1 max-sm:gap-1">
         <div className="flex flex-col gap-2 w-full">
           <label className="text-[#21191B] capitalize">Search in entire data</label>
           <input
@@ -122,7 +127,7 @@ const Post: React.FC = () => {
         ) : (
           <div>
             {PaginationComponent}
-            <PostTable comments={currentItems} />
+            <PostTable comments={currentItems} fetchData={fetchData} />
             {PaginationComponent}
           </div>
         )
