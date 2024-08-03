@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { CommentData } from "../../types/posts.ts";
 import { Tooltip } from "react-tooltip";
 
-
 interface PostTableProps {
   comments: CommentData[];
 }
@@ -12,10 +11,10 @@ const PostTable: React.FC<PostTableProps> = ({ comments }) => {
       <table className="w-full ">
         <thead className="bg-gray-200 table-responsive">
           <tr>
-            <th className="px-4 py-4 text-left">Post Id</th>
-            <th className="px-4 py-4 text-left">Name</th>
-            <th className="px-4 py-4 text-left">Email</th>
-            <th className="px-4 py-4 text-left">Body</th>
+            <th className="px-4 py-4 text-left uppercase">Post Id</th>
+            <th className="px-4 py-4 text-left uppercase">Name</th>
+            <th className="px-4 py-4 text-left uppercase">Email</th>
+            <th className="px-4 py-4 text-left uppercase">Body</th>
           </tr>
         </thead>
         <tbody>

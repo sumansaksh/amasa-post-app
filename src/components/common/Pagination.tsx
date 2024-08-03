@@ -25,7 +25,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, itemsPerPage, tota
   };
 
   return (
-    <div className={`flex max-sm:flex-col justify-center items-center gap-10 max-sm:gap-2`}>
+    <div className={`flex max-sm:flex-col justify-center items-center gap-5 max-sm:gap-2`}>
       <div className="flex items-center gap-2">
         <button onClick={() => setPage(1)} disabled={currentPage === 1} className={`border text-[25px] rounded ${currentPage === 1 ? "bg-[#F2F6FF] text-[#3470E4] opacity-50 cursor-not-allowed" : "bg-[#F2F6FF] text-[#3470E4]"}`}>
           <MdFirstPage />

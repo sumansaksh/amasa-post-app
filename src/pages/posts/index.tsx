@@ -17,10 +17,11 @@ const Post: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const [email, setEmail] = useState("");
-  const [search, setSearch] = useState("");
+
   const searchTerm = searchParams.get("search") || "";
   const emailSearchTerm = searchParams.get("email") || "";
+  const [email, setEmail] = useState(emailSearchTerm || "");
+  const [search, setSearch] = useState(searchTerm || "");
 
   async function fetchData() {
     setIsLoading(true); // Start loading
@@ -77,11 +78,11 @@ const Post: React.FC = () => {
   const PaginationComponent = <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} totalItems={filteredData?.length || 0} setPage={handlePageChange} setItemsPerPage={setItemsPerPage} />;
   return (
     <div className="p-10 flex flex-col justify-center">
-      <h1 className="font-bold text-2xl leading-8 py-10">Post application using JavaScript/TypeScript.</h1>
+      <h1 className="font-bold text-2xl leading-8 py-10 capitalize">Post application using JavaScript / TypeScript.</h1>
       {/* border overflow-x-auto m-10 max-sm:m-1 max-sm:my-10 overflow-scroll */}
       <div className=" m-10 flex flex-row max-sm:flex-col gap-2 py-2 max-sm:py-1 max-sm:gap-1">
         <div className="flex flex-col gap-2 w-full">
-          <label className="text-[#21191B]">Search in entire data</label>
+          <label className="text-[#21191B] capitalize">Search in entire data</label>
           <input
             id="searchAll"
             type="text"
@@ -94,7 +95,7 @@ const Post: React.FC = () => {
             className="mb-4 p-2 border rounded"
           />
         </div>
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2 w-full capitalize">
           <label className="text-[#21191B]">Search by email</label>
           <input
             id="searchEmail"
